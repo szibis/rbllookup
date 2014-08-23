@@ -1,0 +1,17 @@
+#/bin/bash
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+rm /tmp/listed > /dev/null 2>&1
+
+# here enter domain of your mail server
+DOMAINS=""
+
+for domain in $DOMAINS; do php rbllookup.php $domain > /dev/null 2>&1; done
+
+listed=`cat /tmp/listed | grep "^\[Listed\]" | wc -l`
+
+if [ -n $listed ]; then
+      sendemail -f admin@<you host> -t admin@<your domain> -u "Domains listed on DNS RBL" -o message-content-type=text -m < /tmp/listed > /dev/null 2>&1
+  else
+      echo "Not listed"
+fi
